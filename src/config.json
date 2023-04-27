@@ -1,0 +1,271 @@
+{
+    "exportToVpk": false,
+    "campaigns": [
+        { 
+            "name": "Dead Center",
+            "chapters": [
+                { "name": "Hotel", "id": "c1m1_hotel" },
+                { "name": "Streets", "id": "c1m2_streets" },
+                { "name": "Mall", "id": "c1m3_mall" },
+                { "name": "Atrium", "id": "c1m4_atrium" }
+            ],
+            "survival": [
+                { "name": "Gun Shop", "id": "c1m2_streets" },
+                { "name": "Mall Atrium", "id": "c1m4_atrium" }
+            ],
+            "scavenge": [
+                { "name": "Mall Atrium", "id": "c1m4_atrium" }
+            ]
+        },
+        {
+            "name": "The Passing",
+            "chapters": [
+                { "name": "Riverbank", "id": "c6m1_riverbank" },
+                { "name": "Underground", "id": "c6m2_bedlam" },
+                { "name": "Port", "id": "c6m3_port" }
+            ],
+            "survival": [
+                { "name": "Riverbank", "id": "c6m1_riverbank" },
+                { "name": "Underground", "id": "c6m2_bedlam" },
+                { "name": "Port", "id": "c6m3_port" }
+            ],
+            "scavenge": [
+                { "name": "Riverbank", "id": "c6m1_riverbank" },
+                { "name": "Underground", "id": "c6m2_bedlam" },
+                { "name": "Port", "id": "c6m3_port" }
+            ]
+        },
+        {
+            "name": "Dark Carnival",
+            "chapters": [
+                { "name": "Highway", "id": "c2m1_highway" },
+                { "name": "Fairground", "id": "c2m2_fairgrounds" },
+                { "name": "Coaster", "id": "c2m3_coaster" },
+                { "name": "Barns", "id": "c2m4_barns" },
+                { "name": "Concert", "id": "c2m5_concert" }
+            ],
+            "survival": [
+                { "name": "Motel", "id": "c2m1_highway" },
+                { "name": "Stadium Gate", "id": "c2m4_barns" },
+                { "name": "Concert", "id": "c2m5_concert" }
+            ],
+            "scavenge": [
+                { "name": "Motel", "id": "c2m1_highway" }
+            ]
+        },
+        {
+            "name": "Swamp Fever",
+            "chapters": [
+                { "name": "Plank Country", "id": "c3m1_plankcountry" },
+                { "name": "Swamp", "id": "c3m2_swamp" },
+                { "name": "Shanty Town", "id": "c3m3_shantytown" },
+                { "name": "Plantation", "id": "c3m4_plantation" }
+            ],
+            "survival": [
+                { "name": "Gator Village", "id": "c3m1_plankcountry" },
+                { "name": "Shanty Town", "id": "c3m3_shantytown" },
+                { "name": "Plantation", "id": "c3m4_plantation" }
+            ],
+            "scavenge": [
+                { "name": "Plank Country", "id": "c3m1_plankcountry" }
+            ]
+        },
+        {
+            "name": "Hard Rain",
+            "chapters": [
+                { "name": "Milltown", "id": "c4m1_milltown_a" },
+                { "name": "Sugar Mill", "id": "c4m2_sugarmill_a" },
+                { "name": "Mill Escape", "id": "c4m3_sugarmill_b" },
+                { "name": "Return to Town", "id": "c4m4_milltown_b" },
+                { "name": "Town Escape", "id": "c4m5_milltown_escape" }
+            ],
+            "survival": [
+                { "name": "Burger Tank", "id": "c4m1_milltown_a" },
+                { "name": "Sugar Mill", "id": "c4m2_sugarmill_a" },
+                { "name": "Cane Field", "id": "c4m3_sugarmill_b" }
+            ],
+            "scavenge": [
+                { "name": "Milltown", "id": "c4m1_milltown_a" },
+                { "name": "Sugar Mill", "id": "c4m2_sugarmill_a" },
+                { "name": "Mill Escape", "id": "c4m3_sugarmill_b" }
+            ]
+        },
+        {
+            "name": "The Parish",
+            "chapters": [
+                { "name": "Waterfront", "id": "c5m1_waterfront" },
+                { "name": "Park", "id": "c5m2_park" },
+                { "name": "Cemetary", "id": "c5m3_cemetery" },
+                { "name": "Quarter", "id": "c5m4_quarter" },
+                { "name": "Bridge", "id": "c5m5_bridge" }
+            ],
+            "survival": [
+                { "name": "Waterfront", "id": "c5m1_waterfront" },
+                { "name": "Bus Depot", "id": "c5m2_park" },
+                { "name": "Cemetary", "id": "c5m3_cemetery" },
+                { "name": "Float", "id": "c5m4_quarter" },
+                { "name": "Bridge", "id": "c5m5_bridge" }
+            ],
+            "scavenge": [
+                { "name": "Park", "id": "c5m2_park" }
+            ]
+        },
+        {
+            "name": "The Sacrifice",
+            "chapters": [
+                { "name": "Docks", "id": "c7m1_docks" },
+                { "name": "Barge", "id": "c7m2_barge" },
+                { "name": "Port", "id": "c7m3_port" }
+            ],
+            "survival": [
+                { "name": "Train Car", "id": "c7m1_docks" },
+                { "name": "Barge", "id": "c7m2_barge" },
+                { "name": "Port", "id": "c7m3_port" }
+            ],
+            "scavenge": [
+                { "name": "Brick Factory", "id": "c7m1_docks" },
+                { "name": "Barge", "id": "c7m2_barge" }
+            ]
+        },
+        {
+            "name": "No Mercy",
+            "chapters": [
+                { "name": "The Apartments", "id": "c8m1_apartment" },
+                { "name": "The Subway", "id": "c8m2_subway" },
+                { "name": "The Sewer", "id": "c8m3_sewers" },
+                { "name": "The Hospital", "id": "c8m4_interior" },
+                { "name": "Rooftop Finale", "id": "c8m5_rooftop" }
+            ],
+            "survival": [
+                { "name": "Generator Room", "id": "c8m2_subway" },
+                { "name": "Gas Station", "id": "c8m3_sewers" },
+                { "name": "Hospital", "id": "c8m4_interior" },
+                { "name": "Rooftop", "id": "c8m5_rooftop" }
+            ],
+            "scavenge": [
+                { "name": "The Apartments", "id": "c8m1_apartment" },
+                { "name": "The Rooftop", "id": "c8m5_rooftop" }
+            ]
+        },
+        {
+            "name": "Crash Course",
+            "chapters": [
+                { "name": "The Alleys", "id": "c9m1_alleys" },
+                { "name": "The Truck Depot Finale", "id": "c9m2_lots" }
+            ],
+            "survival": [
+                { "name": "Bridge", "id": "c9m1_alleys" },
+                { "name": "Truck Depot", "id": "c9m2_lots" }
+            ],
+            "scavenge": [
+                { "name": "The Alleys", "id": "c9m1_alleys" }
+            ]
+        },
+        {
+            "name": "Death Toll",
+            "chapters": [
+                { "name": "The Turnpike", "id": "c10m1_caves" },
+                { "name": "The Drains", "id": "c10m2_drainage" },
+                { "name": "The Church", "id": "c10m3_ranchhouse" },
+                { "name": "The Town", "id": "c10m4_mainstreet" },
+                { "name": "Boathouse Finale", "id": "c10m5_houseboat" }
+            ],
+            "survival": [
+                { "name": "Drains", "id": "c10m2_drainage" },
+                { "name": "Church", "id": "c10m3_ranchhouse" },
+                { "name": "Street", "id": "c10m4_mainstreet" },
+                { "name": "Boathouse", "id": "c10m5_houseboat" }
+            ],
+            "scavenge": [
+                { "name": "The Church", "id": "c10m3_ranchhouse" }
+            ]
+        },
+        {
+            "name": "Dead Air",
+            "chapters": [
+                { "name": "The Greenhouse", "id": "c11m1_greenhouse" },
+                { "name": "The Crane", "id": "c11m2_offices" },
+                { "name": "The Construction Site", "id": "c11m3_garage" },
+                { "name": "The Terminal", "id": "c11m4_terminal" },
+                { "name": "Runway Finale", "id": "c11m5_runway" }
+            ],
+            "survival": [
+                { "name": "Crane", "id": "c11m2_offices" },
+                { "name": "Construction Site", "id": "c11m3_garage" },
+                { "name": "Terminal", "id": "c11m4_terminal" },
+                { "name": "Runway", "id": "c11m5_runway" }
+            ],
+            "scavenge": [
+                { "name": "The Terminal", "id": "c11m4_terminal" }
+            ]
+        },
+        {
+            "name": "Blood Harvest",
+            "chapters": [
+                { "name": "The Woods", "id": "c12m1_hilltop" },
+                { "name": "The Tunnel", "id": "c12m2_traintunnel" },
+                { "name": "The Bridge", "id": "c12m3_bridge" },
+                { "name": "The Train Station", "id": "c12m4_barn" },
+                { "name": "Farmhouse Finale", "id": "c12m5_cornfield" }
+            ],
+            "survival": [
+                { "name": "Warehouse", "id": "c12m2_traintunnel" },
+                { "name": "Bridge", "id": "c12m3_bridge" },
+                { "name": "Farmhouse", "id": "c12m5_cornfield" }
+            ],
+            "scavenge": [
+                { "name": "The Farmhouse", "id": "c12m5_cornfield" }
+            ]
+        },
+        {
+            "name": "Cold Stream",
+            "chapters": [
+                { "name": "Alpine Creek", "id": "c13m1_alpinecreek" },
+                { "name": "South Pine Stream", "id": "c13m2_southpinestream" },
+                { "name": "Memorial Bridge", "id": "c13m3_memorialbridge" },
+                { "name": "Cut-throat Creek", "id": "c13m4_cutthroatcreek" }
+            ],
+            "survival": [
+                { "name": "Junkyard", "id": "c13m3_memorialbridge" },
+                { "name": "Waterworks", "id": "c13m4_cutthroatcreek" }
+            ],
+            "scavenge": [
+            ]
+        },
+        {
+            "name": "The Last Stand",
+            "chapters": [
+                { "name": "The Junkyard", "id": "c14m1_junkyard" },
+                { "name": "Lighthouse Finale", "id": "c14m2_lighthouse" }
+            ],
+            "survival": [
+                { "name": "Junkyard", "id": "c14m1_junkyard" },
+                { "name": "Lighthouse", "id": "c14m2_lighthouse" }
+            ],
+            "scavenge": [
+                { "name": "The Village", "id": "c14m1_junkyard" },
+                { "name": "The Lighthouse", "id": "c14m2_lighthouse" }
+            ]
+        }
+    ],
+    "mutations": [
+        { "name": "Nightmare", "id": "community4"},
+        { "name": "Special Delivery", "id": "community1"},
+        { "name": "Flu Season", "id": "community2"},
+        { "name": "Death's Door", "id": "community5"},
+        { "name": "L4D1 Co-op", "id": "l4d1coop"},
+        { "name": "Room For One", "id": "mutation10"},
+        { "name": "Healthpackalypse!", "id": "mutation11"},
+        { "name": "Gib Fest", "id": "mutation14"},
+        { "name": "Hunting Party", "id": "mutation16"},
+        { "name": "Taaannnk!!", "id": "mutation19"},
+        { "name": "Headshot!", "id": "mutation2"},
+        { "name": "Healing Gnome", "id": "mutation20"},
+        { "name": "Bleed Out", "id": "mutation3"},
+        { "name": "Hard Eight", "id": "mutation4"},
+        { "name": "Four Swordsmen", "id": "mutation5"},
+        { "name": "Chainsaw Massacre", "id": "mutation7"},
+        { "name": "Iron Man", "id": "mutation8"},
+        { "name": "Last Gnome On Earth", "id": "mutation9"}
+    ]
+}

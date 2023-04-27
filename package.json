@@ -1,0 +1,34 @@
+{
+  "name": "l4d2-ssmenu-roller",
+  "version": "1.0.0",
+  "description": "Roll your own Left 4 Dead 2 (PC) split-screen game menu (based on mod https://gamebanana.com/mods/27912)",
+  "homepage": "https://github.com/kingoftherats/l4d2-ssmenu-roller",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kingoftherats/l4d2-ssmenu-roller"
+  },
+  "author": "Matthew D <mpdtechpro@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^18.14.6",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.29.0",
+    "rimraf": "^5.0.0",
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.81.0",
+    "webpack-cli": "^5.0.2"
+  },
+  "scripts": {
+    "clean": "rimraf dist/",
+    "copy-template-files": "copyfiles \"template/**/*\" dist/",
+    "copy-config-file": "copyfiles -f \"./src/config.json\" dist/",
+    "build": "npm run clean && npx webpack && npm run copy-config-file && npm run copy-template-files"
+  }
+}
