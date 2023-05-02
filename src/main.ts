@@ -488,9 +488,12 @@ const createDifficultyMenu = (resName: string, gameType: GameType, mutationId: s
 }
 
 const copyStaticResources = () => {
-    fs.copySync(`${exportPath}/../template/cfg`, `${exportPath}/cfg`, { overwrite: false });
     fs.copySync(`${exportPath}/../template/materials`, `${exportPath}/materials`, { overwrite: false });
     fs.copyFileSync(`${exportPath}/../template/addoninfo.txt`, `${exportPath}/addoninfo.txt`);
+
+    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/ingamemainmenu.res`, `${exportPath}/resource/ui/l4d360ui/ingamemainmenu.res`);
+    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/setsurvivorp1flyout.res`, `${exportPath}/resource/ui/l4d360ui/setsurvivorp1flyout.res`);
+    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/setsurvivorp2flyout.res`, `${exportPath}/resource/ui/l4d360ui/setsurvivorp2flyout.res`);
 };
 
 const main = (): void => {
@@ -500,9 +503,7 @@ const main = (): void => {
     const menuRes: mainMenuRes = parseMainMenuRes(fs.readFileSync(path.resolve(__dirname, './template/resource/ui/l4d360ui/mainmenu.res')).toString());
 
     createSplitScreenModeMenu(config, menuRes);
-
-    //TODO: add in-game character switching (since unable to choose in custom menu)
-
+    
     copyStaticResources();
 
     //TODO: auto-vpk
