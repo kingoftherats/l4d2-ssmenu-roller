@@ -1,4 +1,4 @@
-"Resource/UI/SwitchSurvivorP1Flyout.res"
+"Resource/UI/SetSurvivorP1Flyout.res"
 {
 	"PnlBackground"
 	{
