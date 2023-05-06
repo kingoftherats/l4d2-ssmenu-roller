@@ -29,6 +29,7 @@
     "clean": "rimraf dist/",
     "copy-template-files": "copyfiles \"template/**/*\" dist/",
     "copy-config-file": "copyfiles -f \"./src/config.json\" dist/",
-    "build": "npm run clean && npx webpack && npm run copy-config-file && npm run copy-template-files"
+    "copy-license-file": "copyfiles -f \"./LICENSE\" dist/",
+    "build": "npm run clean && npx webpack && npm run copy-config-file && npm run copy-template-files && npm run copy-license-file"
   }
 }
