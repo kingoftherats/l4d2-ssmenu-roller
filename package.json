@@ -9,6 +9,7 @@
   },
   "author": "Matthew D <mpdtechpro@gmail.com>",
   "license": "MIT",
+  "keywords": ["L4D", "L4D2", "Left For Dead"],
   "dependencies": {
     "fs-extra": "^11.1.1"
   },
@@ -30,6 +31,7 @@
     "copy-template-files": "copyfiles \"template/**/*\" dist/",
     "copy-config-file": "copyfiles -f \"./src/config.json\" dist/",
     "copy-license-file": "copyfiles -f \"./LICENSE\" dist/",
-    "build": "npm run clean && npx webpack && npm run copy-config-file && npm run copy-template-files && npm run copy-license-file"
+    "copy-readme": "copyfiles -f \"./README.md\" dist/",
+    "build": "npm run clean && npx webpack && npm run copy-config-file && npm run copy-template-files && npm run copy-license-file && npm run copy-readme"
   }
 }

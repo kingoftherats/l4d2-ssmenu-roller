@@ -1,11 +1,14 @@
 import * as path from 'path';
 import fs from 'fs-extra';
+import process from 'process';
 import { parseMainMenuRes, stringifyMainMenuRes, stringifyBasicRes, mainMenuRes, resContainer, basicRes } from './util/res';
 import { ssConfig, ssMap } from './util/config';
 import { resProperty } from './util/res';
+import { Vpk } from 'node-vvpk';
 
-const exportPath: string = path.resolve(__dirname, './export');
-const resourceFileRoot: string = `${exportPath}/resource/ui/l4d360ui`;
+const exportPath: string = path.join(__dirname, 'export');
+const exportFilePath: string = path.join(__dirname, 'export.vpk');
+const resourceFileRoot: string = path.join(exportPath, 'resource', 'ui', 'l4d360ui');
 
 const resourceNameRoot: string = 'resource/UI/L4D360UI';
 
@@ -61,9 +64,14 @@ enum Difficulty {
  */
 const cleanup = (): void => {
     try {
-        fs.rmSync(exportPath, { recursive:true, force: true });
+        fs.rmSync(exportPath, { recursive: true, force: true });
     } catch { }
+}
 
+/**
+ * Create the necessary directory structure for the export
+ */
+const createExportDirs = (): void => {
     fs.mkdirSync(resourceFileRoot, { recursive: true });
 }
 
@@ -488,25 +496,37 @@ const createDifficultyMenu = (resName: string, gameType: GameType, mutationId: s
 }
 
 const copyStaticResources = () => {
-    fs.copySync(`${exportPath}/../template/materials`, `${exportPath}/materials`, { overwrite: false });
-    fs.copyFileSync(`${exportPath}/../template/addoninfo.txt`, `${exportPath}/addoninfo.txt`);
+    fs.copySync(path.join(exportPath, '..', 'template', 'materials'), path.join(exportPath, 'materials'), { overwrite: false });
+    fs.copyFileSync(path.join(exportPath, '..', 'template', 'addoninfo.txt'), path.join(exportPath, 'addoninfo.txt'));
 
-    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/ingamemainmenu.res`, `${exportPath}/resource/ui/l4d360ui/ingamemainmenu.res`);
-    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/setsurvivorp1flyout.res`, `${exportPath}/resource/ui/l4d360ui/setsurvivorp1flyout.res`);
-    fs.copyFileSync(`${exportPath}/../template/resource/ui/l4d360ui/setsurvivorp2flyout.res`, `${exportPath}/resource/ui/l4d360ui/setsurvivorp2flyout.res`);
+    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'));
+    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'));
+    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'));
 };
 
 const main = (): void => {
     cleanup();
+    createExportDirs();
 
-    const config: ssConfig = JSON.parse(fs.readFileSync(path.resolve(__dirname, './config.json')).toString()) as ssConfig;
-    const menuRes: mainMenuRes = parseMainMenuRes(fs.readFileSync(path.resolve(__dirname, './template/resource/ui/l4d360ui/mainmenu.res')).toString());
+    const config: ssConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')).toString()) as ssConfig;
+    const menuRes: mainMenuRes = parseMainMenuRes(fs.readFileSync(path.join(__dirname, 'template', 'resource', 'ui', 'l4d360ui', 'mainmenu.res')).toString());
 
     createSplitScreenModeMenu(config, menuRes);
     
     copyStaticResources();
 
-    //TODO: auto-vpk
+    if (config.exportToVpk) {
+        const args: string[] = process.argv;
+
+        const vpk: Vpk = Vpk.fromDirectory(exportPath);
+        
+        vpk.setVersion(1);
+        if (args.length > 2)
+            vpk.saveToFile(exportFilePath, false, args[2]);
+        else
+            vpk.saveToFile(exportFilePath, false, 'utf-8');
+        cleanup();
+    }
 };
 
 main();
