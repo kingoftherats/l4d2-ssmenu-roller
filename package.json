@@ -9,9 +9,14 @@
   },
   "author": "Matthew D <mpdtechpro@gmail.com>",
   "license": "MIT",
-  "keywords": ["L4D", "L4D2", "Left For Dead"],
+  "keywords": [
+    "L4D",
+    "L4D2",
+    "Left For Dead"
+  ],
   "dependencies": {
-    "fs-extra": "^11.1.1"
+    "fs-extra": "^11.1.1",
+    "node-vvpk": "^1.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
