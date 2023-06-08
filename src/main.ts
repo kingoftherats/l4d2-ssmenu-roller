@@ -433,10 +433,10 @@ const createMapMenu = (config: ssConfig, resName: string, gameType: GameType, mu
 
         if (mapResName.length > 0) {
             cont.properties.push({ name: 'command', value: `"Flm${mapResName}Flyout"` });
-            createDifficultyMenu(mapResName, gameType as GameType, mutationId, maps[i].id);
+            createDifficultyMenu(config, mapResName, gameType as GameType, mutationId, maps[i].id);
         }
         else {
-            cont.properties.push({ name: 'command', value: `"#sv_cheats 1;map ${maps[i].id} ${mode};wait 100;connect_splitscreen localhost 2"` });
+            cont.properties.push({ name: 'command', value: `"#sv_cheats 1;sv_pausable 1;map ${maps[i].id} ${mode};wait 100;connect_splitscreen localhost 2;cmd2 name ${config.player2Name}"` });
         }
 
         flyout.containers.push(cont);
@@ -447,12 +447,13 @@ const createMapMenu = (config: ssConfig, resName: string, gameType: GameType, mu
 
 /**
  * Create the difficulty menu flyout and link to the main menu. Generates start commands for campaign type games.
+ * @param config the split-screen config
  * @param resName the name of the resource to be created
  * @param gameType the game type (campaign, mutation, scavenge, etc.)
  * @param mutationId the mutation id or null if N/A
  * @param mapId the map id
  */
-const createDifficultyMenu = (resName: string, gameType: GameType, mutationId: string | null, mapId: string): void => {
+const createDifficultyMenu = (config: ssConfig, resName: string, gameType: GameType, mutationId: string | null, mapId: string): void => {
     const menu: basicRes = { name: `Resource/UI/${resName}.res`, containers: [] };
 
     let i = 0;
@@ -483,7 +484,7 @@ const createDifficultyMenu = (resName: string, gameType: GameType, mutationId: s
                 break;
         }
 
-        cont.properties.push({ name: 'command', value: `"#sv_cheats 1;map ${mapId} ${mode};z_difficulty ${difficulty};wait 100;connect_splitscreen localhost 2"` });
+        cont.properties.push({ name: 'command', value: `"#sv_cheats 1;sv_pausable 1;map ${mapId} ${mode};z_difficulty ${difficulty};wait 100;connect_splitscreen localhost 2;cmd2 name ${config.player2Name}"` });
         menu.containers.push(cont);
         i++;
     }
@@ -501,7 +502,7 @@ const copyStaticResources = () => {
 
     fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'));
     fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'));
-    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'));
+    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp2flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp2flyout.res'));
 };
 
 const main = (): void => {

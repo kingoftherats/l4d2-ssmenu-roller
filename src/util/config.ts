@@ -1,4 +1,5 @@
 export interface ssConfig {
+    player2Name: string,
     exportToVpk: boolean,
     campaigns: ssConfigCampaign[],
     mutations: ssMutation[]
