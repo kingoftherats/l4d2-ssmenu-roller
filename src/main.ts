@@ -246,38 +246,58 @@ const createGameTypesMenu = (config: ssConfig, resName: string, mainMenu: mainMe
  * @param mainMenu the main menu resource
  */
 const createMutationMenu = (config: ssConfig, resName: string, mainMenu: mainMenuRes): void => {
-    const flyout: basicRes = { name: `Resource/UI/${resName}Flyout.res`, containers: [] };
+    let currMutationFlyout: basicRes = { name: `Resource/UI/${resName}Flyout.res`, containers: [] };
 
-    const bkgCont: resContainer = getBackgroundContainer(config.mutations.length,
-        config.mutations.map(x => x.name).reduce((a, b) => a.length > b.length ? a : b).length);
-    flyout.containers.push(bkgCont);
+    //Support long mutation menus via "paging"
+    let moreMenuCount = 0;
 
     for (let i = 0; i < config.mutations.length; i++) {
-        const cont: resContainer = {
-            name: `Btn${i}`,
-            properties: [
-                ...BTN_PROPS_TEMPLATE,
-                { name: 'fieldName', value: `"Btn${i}"` },
-                { name: 'labelText', value: `"${config.mutations[i].name}"` },
-                { name: 'ypos', value: `"${i * ROW_HEIGHT}"` },
-                { name: 'wide', value: `"${config.mutations[i].name.length * WIDTH_PER_CHAR}"` }
-            ]
-        };
+        //Check to see if we've maxed out the rows for this menu
+        if (currMutationFlyout.containers.length === MAX_MENU_ROWS) {
+            //Add a "More..." entry, commit this flyout and sub in the next one
+            moreMenuCount++;
 
-        applyContainerNavProps(cont, i, config.mutations.length);
+            const moreIdx = MAX_MENU_ROWS;
+            const moreResName = `${resName}More${moreMenuCount}`;
+            addMenuItem(mainMenu, currMutationFlyout, moreIdx, 'More...', moreResName);
+
+            for(let j = 0; j < currMutationFlyout.containers.length; j++) {
+                applyContainerNavProps(currMutationFlyout.containers[j], j, currMutationFlyout.containers.length);
+            }
+
+            //Background at end because of paging
+            addMutationMenuBackground(config, currMutationFlyout);
+
+            fs.writeFileSync(`${resourceFileRoot}/` + currMutationFlyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currMutationFlyout));
+
+            currMutationFlyout = { name: `Resource/UI/${moreResName}Flyout.res`, containers: [] };
+        }
 
         const mutationResName: string = `SplitMutation${config.mutations[i].id}`;
-
-        mainMenu.containers.push(getMainMenuCommandContainer(mutationResName));
-        mainMenu.gameModesSplit.modes.push(getMainMenuModeContainer(mutationResName));
-
-        cont.properties.push({ name: 'command', value: `"Flm${mutationResName}Flyout"` });
-        flyout.containers.push(cont);
+        addMenuItem(mainMenu, currMutationFlyout, (i % MAX_MENU_ROWS), config.mutations[i].name, mutationResName);
 
         createCampaignMenu(config, mutationResName, GameType.Mutation, config.mutations[i].id, mainMenu);
     }
 
-    fs.writeFileSync(`${resourceFileRoot}/` + `${resName}Flyout.res`.toLocaleLowerCase(), stringifyBasicRes(flyout));
+    for(let j = 0; j < currMutationFlyout.containers.length; j++) {
+        applyContainerNavProps(currMutationFlyout.containers[j], j, currMutationFlyout.containers.length);
+    }
+
+    //Background at end because of paging
+    addMutationMenuBackground(config, currMutationFlyout);
+
+    fs.writeFileSync(`${resourceFileRoot}/` + currMutationFlyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currMutationFlyout));
+};
+
+/**
+ * Configure the background properties for a mutation menu flyout
+ * @param config the split-screen config
+ * @param mutationFlyout the target mutation flyout
+ */
+const addMutationMenuBackground = (config: ssConfig, mutationFlyout: basicRes): void => {
+    const bkgCont: resContainer = getBackgroundContainer(mutationFlyout.containers.length,
+        config.mutations.map(x => x.name).reduce((a, b) => a.length > b.length ? a : b).length);
+    mutationFlyout.containers.unshift(bkgCont);
 };
 
 /**
@@ -330,13 +350,13 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
 
                 const moreIdx = MAX_MENU_ROWS;
                 const moreResName = `${resName}More${moreMenuCount}`;
-                addCampaignMenuItem(mainMenu, currCampaignflyout, moreIdx, 'More...', moreResName);
+                addMenuItem(mainMenu, currCampaignflyout, moreIdx, 'More...', moreResName);
 
                 for(let j = 0; j < currCampaignflyout.containers.length; j++) {
                     applyContainerNavProps(currCampaignflyout.containers[j], j, currCampaignflyout.containers.length);
                 }
 
-                //Background at end because we may have "filtered" some N/A campaigns for the target game mode
+                //Background at end because we may have "filtered" some N/A campaigns for the target game mode and paging
                 addCampaignMenuBackground(config, currCampaignflyout);
 
                 fs.writeFileSync(`${resourceFileRoot}/` + currCampaignflyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currCampaignflyout));
@@ -345,7 +365,7 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
             }
 
             const itemIdx = totalCampaignsUsed % MAX_MENU_ROWS;
-            addCampaignMenuItem(mainMenu, currCampaignflyout, itemIdx, campaign.name, campaignResName);
+            addMenuItem(mainMenu, currCampaignflyout, itemIdx, campaign.name, campaignResName);
 
             createMapMenu(config, campaignResName, gameType as GameType, mutationId, campaign.name, mainMenu);
 
@@ -357,21 +377,21 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
         applyContainerNavProps(currCampaignflyout.containers[j], j, currCampaignflyout.containers.length);
     }
 
-    //Background at end because we may have "filtered" some N/A campaigns for the target game mode
+    //Background at end because we may have "filtered" some N/A campaigns for the target game mode and paging
     addCampaignMenuBackground(config, currCampaignflyout);
 
     fs.writeFileSync(`${resourceFileRoot}/` + currCampaignflyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currCampaignflyout));
 };
 
 /**
- * Add an item to a campaign menu flyout
+ * Add an item to a menu flyout
  * @param mainMenu the main menu resource
- * @param campaignFlyout the target campaign flyout
+ * @param menuFlyout the target menu flyout
  * @param itemIdx the item index within the menu
  * @param labelText the item label text
  * @param itemResName the item resource name
  */
-const addCampaignMenuItem = (mainMenu: mainMenuRes, campaignFlyout: basicRes, itemIdx: number, labelText: string, itemResName: string): void => {
+const addMenuItem = (mainMenu: mainMenuRes, menuFlyout: basicRes, itemIdx: number, labelText: string, itemResName: string): void => {
     const btnCont: resContainer = {
         name: `Btn${itemIdx}`,
         properties: [
@@ -387,7 +407,7 @@ const addCampaignMenuItem = (mainMenu: mainMenuRes, campaignFlyout: basicRes, it
     mainMenu.gameModesSplit.modes.push(getMainMenuModeContainer(itemResName));
 
     btnCont.properties.push({ name: 'command', value: `"Flm${itemResName}Flyout"` });
-    campaignFlyout.containers.push(btnCont);
+    menuFlyout.containers.push(btnCont);
 };
 
 /**
