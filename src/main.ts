@@ -264,7 +264,7 @@ const createMutationMenu = (config: ssConfig, resName: string, mainMenu: mainMen
             //Add a "Next..." entry, commit this flyout and sub in the next one
             extraPageCount++;
 
-            const nextPageIdx = MAX_MENU_ROWS;
+            const nextPageIdx = currMutationFlyout.containers.length;
             const nextPageResName = `${resName}Next${extraPageCount}`;
             addMenuItem(mainMenu, currMutationFlyout, nextPageIdx, 'Next...', nextPageResName);
 
