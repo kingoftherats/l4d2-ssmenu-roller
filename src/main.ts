@@ -2,7 +2,7 @@ import * as path from 'path';
 import fs from 'fs-extra';
 import process from 'process';
 import { parseMainMenuRes, stringifyMainMenuRes, stringifyBasicRes, mainMenuRes, resContainer, basicRes } from './util/res';
-import { ssConfig, ssMap } from './util/config';
+import { ssConfig, ssConfigCampaign, ssMap } from './util/config';
 import { resProperty } from './util/res';
 import { Vpk } from 'node-vvpk';
 
@@ -14,6 +14,8 @@ const resourceNameRoot: string = 'resource/UI/L4D360UI';
 
 const ROW_HEIGHT: number = 21;
 const WIDTH_PER_CHAR: number = 10;
+
+const MAX_MENU_ROWS: number = 15;
 
 const BACKGROUND_CONTAINER_TEMPLATE: resContainer = {
     name: 'PnlBackground',
@@ -287,78 +289,116 @@ const createMutationMenu = (config: ssConfig, resName: string, mainMenu: mainMen
  * @param mainMenu the main menu resource
  */
 const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameType, mutationId: string | null, mainMenu: mainMenuRes): void => {
-    const flyout: basicRes = { name: `Resource/UI/${resName}Flyout.res`, containers: [] };
+    let currCampaignflyout: basicRes = { name: `Resource/UI/${resName}Flyout.res`, containers: [] };
 
     //Some campaigns don't have map entries for certain game types so make sure to compensate for that
     let totalCampaignsUsed = 0;
-    switch(gameType) {
-        case GameType.Survival:
-            totalCampaignsUsed = config.campaigns.filter(x => x.survival.length > 0).length;
-            break;
-        case GameType.Scavenge:
-            totalCampaignsUsed = config.campaigns.filter(x => x.scavenge.length > 0).length;
-            break;
-        default:
-            totalCampaignsUsed = config.campaigns.filter(x => x.chapters.length > 0).length;
-            break;
-    }
 
-    let i = 0;
-    config.campaigns.forEach(campaign => {
+    //Support long campaign menus via "paging"
+    let moreMenuCount = 0;
+
+    for (let i = 0; i < config.campaigns.length; i++) {
+        const campaign: ssConfigCampaign = config.campaigns[i];
+
         let campaignResName = '';
-        const campaignNoSpaces: string = campaign.name.replace(/\s/g, '');
+        const campaignNameNoSpaces: string = campaign.name.replace(/\s/g, '');
         switch(gameType) {
             case GameType.Campaign:
-                campaignResName = `SplitCampaign${campaignNoSpaces}`;
+                campaignResName = `SplitCampaign${campaignNameNoSpaces}`;
                 break;
             case GameType.Mutation:
-                campaignResName = `Split${mutationId}${campaignNoSpaces}`;
+                campaignResName = `Split${mutationId}${campaignNameNoSpaces}`;
                 break;
             case GameType.Realism:
-                campaignResName = `SplitRealism${campaignNoSpaces}`;
+                campaignResName = `SplitRealism${campaignNameNoSpaces}`;
                 break;
             case GameType.Survival:
                 if (campaign.survival.length > 0)
-                    campaignResName = `SplitSurvival${campaignNoSpaces}`;
+                    campaignResName = `SplitSurvival${campaignNameNoSpaces}`;
                 break;
             case GameType.Scavenge:
                 if (campaign.scavenge.length > 0)
-                    campaignResName = `SplitScavenge${campaignNoSpaces}`;
+                    campaignResName = `SplitScavenge${campaignNameNoSpaces}`;
                 break;
         }
 
         if (campaignResName.length > 0) {
-            const cont: resContainer = {
-                name: `Btn${i}`,
-                properties: [
-                    ...BTN_PROPS_TEMPLATE,
-                    { name: 'fieldName', value: `"Btn${i}"` },
-                    { name: 'labelText', value: `"${campaign.name}"` },
-                    { name: 'ypos', value: `"${i * ROW_HEIGHT}"` },
-                    { name: 'wide', value: `"${campaign.name.length * WIDTH_PER_CHAR}"` }
-                ]
-            };
+            //Check to see if we've maxed out the rows for this menu
+            if (currCampaignflyout.containers.length === MAX_MENU_ROWS) {
+                //Add a "More..." entry, commit this flyout and sub in the next one
+                moreMenuCount++;
 
-            applyContainerNavProps(cont, i, totalCampaignsUsed);
+                const moreIdx = MAX_MENU_ROWS;
+                const moreResName = `${resName}More${moreMenuCount}`;
+                addCampaignMenuItem(mainMenu, currCampaignflyout, moreIdx, 'More...', moreResName);
 
-            mainMenu.containers.push(getMainMenuCommandContainer(campaignResName));
-            mainMenu.gameModesSplit.modes.push(getMainMenuModeContainer(campaignResName));
+                for(let j = 0; j < currCampaignflyout.containers.length; j++) {
+                    applyContainerNavProps(currCampaignflyout.containers[j], j, currCampaignflyout.containers.length);
+                }
 
-            cont.properties.push({ name: 'command', value: `"Flm${campaignResName}Flyout"` });
-            flyout.containers.push(cont);
+                //Background at end because we may have "filtered" some N/A campaigns for the target game mode
+                addCampaignMenuBackground(config, currCampaignflyout);
+
+                fs.writeFileSync(`${resourceFileRoot}/` + currCampaignflyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currCampaignflyout));
+
+                currCampaignflyout = { name: `Resource/UI/${moreResName}Flyout.res`, containers: [] };
+            }
+
+            const itemIdx = totalCampaignsUsed % MAX_MENU_ROWS;
+            addCampaignMenuItem(mainMenu, currCampaignflyout, itemIdx, campaign.name, campaignResName);
 
             createMapMenu(config, campaignResName, gameType as GameType, mutationId, campaign.name, mainMenu);
 
-            i++;
+            totalCampaignsUsed++;
         }
-    });
+    }
+
+    for(let j = 0; j < currCampaignflyout.containers.length; j++) {
+        applyContainerNavProps(currCampaignflyout.containers[j], j, currCampaignflyout.containers.length);
+    }
 
     //Background at end because we may have "filtered" some N/A campaigns for the target game mode
-    const bkgCont: resContainer = getBackgroundContainer(totalCampaignsUsed,
-        config.campaigns.map(x => x.name).reduce((a, b) => a.length > b.length ? a : b).length);
-    flyout.containers.unshift(bkgCont);
+    addCampaignMenuBackground(config, currCampaignflyout);
 
-    fs.writeFileSync(`${resourceFileRoot}/` + `${resName}Flyout.res`.toLocaleLowerCase(), stringifyBasicRes(flyout));
+    fs.writeFileSync(`${resourceFileRoot}/` + currCampaignflyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currCampaignflyout));
+};
+
+/**
+ * Add an item to a campaign menu flyout
+ * @param mainMenu the main menu resource
+ * @param campaignFlyout the target campaign flyout
+ * @param itemIdx the item index within the menu
+ * @param labelText the item label text
+ * @param itemResName the item resource name
+ */
+const addCampaignMenuItem = (mainMenu: mainMenuRes, campaignFlyout: basicRes, itemIdx: number, labelText: string, itemResName: string): void => {
+    const btnCont: resContainer = {
+        name: `Btn${itemIdx}`,
+        properties: [
+            ...BTN_PROPS_TEMPLATE,
+            { name: 'fieldName', value: `"Btn${itemIdx}"` },
+            { name: 'labelText', value: `"${labelText}"` },
+            { name: 'ypos', value: `"${itemIdx * ROW_HEIGHT}"` },
+            { name: 'wide', value: `"${labelText.length * WIDTH_PER_CHAR}"` }
+        ]
+    };
+
+    mainMenu.containers.push(getMainMenuCommandContainer(itemResName));
+    mainMenu.gameModesSplit.modes.push(getMainMenuModeContainer(itemResName));
+
+    btnCont.properties.push({ name: 'command', value: `"Flm${itemResName}Flyout"` });
+    campaignFlyout.containers.push(btnCont);
+};
+
+/**
+ * Configure the background properties for a campaign menu flyout
+ * @param config the split-screen config
+ * @param campaignFlyout the target campaign flyout
+ */
+const addCampaignMenuBackground = (config: ssConfig, campaignFlyout: basicRes): void => {
+    const bkgCont: resContainer = getBackgroundContainer(campaignFlyout.containers.length,
+        config.campaigns.map(x => x.name).reduce((a, b) => a.length > b.length ? a : b).length);
+    campaignFlyout.containers.unshift(bkgCont);
 };
 
 /**
