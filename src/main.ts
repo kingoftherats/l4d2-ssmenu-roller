@@ -249,17 +249,24 @@ const createMutationMenu = (config: ssConfig, resName: string, mainMenu: mainMen
     let currMutationFlyout: basicRes = { name: `Resource/UI/${resName}Flyout.res`, containers: [] };
 
     //Support long mutation menus via "paging"
-    let moreMenuCount = 0;
+    let extraPageCount = 0;
 
     for (let i = 0; i < config.mutations.length; i++) {
         //Check to see if we've maxed out the rows for this menu
         if (currMutationFlyout.containers.length === MAX_MENU_ROWS) {
-            //Add a "More..." entry, commit this flyout and sub in the next one
-            moreMenuCount++;
+            //Add a "Prev..." entry if not the first page
+            if (extraPageCount !== 0) {
+                const prevPageIdx = currMutationFlyout.containers.length;
+                const prevPageResName = `${resName}${extraPageCount > 1 ? 'Next' + (extraPageCount - 1) : ''}`;
+                addMenuItem(mainMenu, currMutationFlyout, prevPageIdx, 'Prev...', prevPageResName);
+            }
 
-            const moreIdx = MAX_MENU_ROWS;
-            const moreResName = `${resName}More${moreMenuCount}`;
-            addMenuItem(mainMenu, currMutationFlyout, moreIdx, 'More...', moreResName);
+            //Add a "Next..." entry, commit this flyout and sub in the next one
+            extraPageCount++;
+
+            const nextPageIdx = MAX_MENU_ROWS;
+            const nextPageResName = `${resName}Next${extraPageCount}`;
+            addMenuItem(mainMenu, currMutationFlyout, nextPageIdx, 'Next...', nextPageResName);
 
             for(let j = 0; j < currMutationFlyout.containers.length; j++) {
                 applyContainerNavProps(currMutationFlyout.containers[j], j, currMutationFlyout.containers.length);
@@ -270,13 +277,20 @@ const createMutationMenu = (config: ssConfig, resName: string, mainMenu: mainMen
 
             fs.writeFileSync(`${resourceFileRoot}/` + currMutationFlyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currMutationFlyout));
 
-            currMutationFlyout = { name: `Resource/UI/${moreResName}Flyout.res`, containers: [] };
+            currMutationFlyout = { name: `Resource/UI/${nextPageResName}Flyout.res`, containers: [] };
         }
 
         const mutationResName: string = `SplitMutation${config.mutations[i].id}`;
         addMenuItem(mainMenu, currMutationFlyout, (i % MAX_MENU_ROWS), config.mutations[i].name, mutationResName);
 
         createCampaignMenu(config, mutationResName, GameType.Mutation, config.mutations[i].id, mainMenu);
+    }
+
+    //Add a "Prev..." entry if not the first page
+    if (extraPageCount !== 0) {
+        const prevPageIdx = currMutationFlyout.containers.length;
+        const prevPageResName = `${resName}${extraPageCount > 1 ? 'Next' + (extraPageCount - 1) : ''}`;
+        addMenuItem(mainMenu, currMutationFlyout, prevPageIdx, 'Prev...', prevPageResName);
     }
 
     for(let j = 0; j < currMutationFlyout.containers.length; j++) {
@@ -315,7 +329,7 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
     let totalCampaignsUsed = 0;
 
     //Support long campaign menus via "paging"
-    let moreMenuCount = 0;
+    let extraPageCount = 0;
 
     for (let i = 0; i < config.campaigns.length; i++) {
         const campaign: ssConfigCampaign = config.campaigns[i];
@@ -345,12 +359,19 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
         if (campaignResName.length > 0) {
             //Check to see if we've maxed out the rows for this menu
             if (currCampaignflyout.containers.length === MAX_MENU_ROWS) {
-                //Add a "More..." entry, commit this flyout and sub in the next one
-                moreMenuCount++;
+                //Add a "Prev..." entry if not the first page
+                if (extraPageCount !== 0) {
+                    const prevPageIdx = currCampaignflyout.containers.length;
+                    const prevPageResName = `${resName}${extraPageCount > 1 ? 'Next' + (extraPageCount - 1) : ''}`;
+                    addMenuItem(mainMenu, currCampaignflyout, prevPageIdx, 'Prev...', prevPageResName);
+                }
 
-                const moreIdx = MAX_MENU_ROWS;
-                const moreResName = `${resName}More${moreMenuCount}`;
-                addMenuItem(mainMenu, currCampaignflyout, moreIdx, 'More...', moreResName);
+                //Add a "Next..." entry, commit this flyout and sub in the next one
+                extraPageCount++;
+
+                const nextPageIdx = currCampaignflyout.containers.length;
+                const nextPageResName = `${resName}Next${extraPageCount}`;
+                addMenuItem(mainMenu, currCampaignflyout, nextPageIdx, 'Next...', nextPageResName);
 
                 for(let j = 0; j < currCampaignflyout.containers.length; j++) {
                     applyContainerNavProps(currCampaignflyout.containers[j], j, currCampaignflyout.containers.length);
@@ -361,7 +382,7 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
 
                 fs.writeFileSync(`${resourceFileRoot}/` + currCampaignflyout.name.replace('Resource/UI/', '').toLocaleLowerCase(), stringifyBasicRes(currCampaignflyout));
 
-                currCampaignflyout = { name: `Resource/UI/${moreResName}Flyout.res`, containers: [] };
+                currCampaignflyout = { name: `Resource/UI/${nextPageResName}Flyout.res`, containers: [] };
             }
 
             const itemIdx = totalCampaignsUsed % MAX_MENU_ROWS;
@@ -371,6 +392,13 @@ const createCampaignMenu = (config: ssConfig, resName: string, gameType: GameTyp
 
             totalCampaignsUsed++;
         }
+    }
+
+    //Add a "Prev..." entry if not the first page
+    if (extraPageCount !== 0) {
+        const prevPageIdx = currCampaignflyout.containers.length;
+        const prevPageResName = `${resName}${extraPageCount > 1 ? 'Next' + (extraPageCount - 1) : ''}`;
+        addMenuItem(mainMenu, currCampaignflyout, prevPageIdx, 'Prev...', prevPageResName);
     }
 
     for(let j = 0; j < currCampaignflyout.containers.length; j++) {
