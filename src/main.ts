@@ -524,13 +524,27 @@ const createMapMenu = (config: ssConfig, resName: string, gameType: GameType, mu
             createDifficultyMenu(config, mapResName, gameType as GameType, mutationId, maps[i].id);
         }
         else {
-            cont.properties.push({ name: 'command', value: `"#sv_cheats 1;sv_pausable 1;map ${maps[i].id} ${mode};wait 100;connect_splitscreen localhost 2;cmd2 name ${config.player2Name}"` });
+            cont.properties.push({ name: 'command', value: getStartCommand(maps[i].id, mode, config.player2Name, null) });
         }
 
         flyout.containers.push(cont);
     }
 
     fs.writeFileSync(`${resourceFileRoot}/` + `${resName}Flyout.res`.toLocaleLowerCase(), stringifyBasicRes(flyout));
+}
+
+/**
+ * Generates a command to start a split-screen game
+ * @param mapId the starting map ID
+ * @param gameMode the game mode
+ * @param p2Name the name to show for player 2
+ * @param difficulty the difficulty
+ * @returns a command string
+ */
+const getStartCommand = (mapId: string, gameMode: string, p2Name: string, difficulty: string | null): string => {
+    if (difficulty)
+        return `"#sv_cheats 1;sv_pausable 1;map ${mapId} ${gameMode};z_difficulty ${difficulty};wait 100;connect_splitscreen localhost 2;cmd2 name ${p2Name.replace(/\s/g, '_')}; exec korss"`;
+    return `"#sv_cheats 1;sv_pausable 1;map ${mapId} ${gameMode};wait 100;connect_splitscreen localhost 2;cmd2 name ${p2Name.replace(/\s/g, '_')}; exec korss"`;
 }
 
 /**
@@ -572,7 +586,7 @@ const createDifficultyMenu = (config: ssConfig, resName: string, gameType: GameT
                 break;
         }
 
-        cont.properties.push({ name: 'command', value: `"#sv_cheats 1;sv_pausable 1;map ${mapId} ${mode};z_difficulty ${difficulty};wait 100;connect_splitscreen localhost 2;cmd2 name ${config.player2Name}"` });
+        cont.properties.push({ name: 'command', value: getStartCommand(mapId, mode, config.player2Name, difficulty) });
         menu.containers.push(cont);
         i++;
     }
@@ -587,10 +601,6 @@ const createDifficultyMenu = (config: ssConfig, resName: string, gameType: GameT
 const copyStaticResources = () => {
     fs.copySync(path.join(exportPath, '..', 'template', 'materials'), path.join(exportPath, 'materials'), { overwrite: false });
     fs.copyFileSync(path.join(exportPath, '..', 'template', 'addoninfo.txt'), path.join(exportPath, 'addoninfo.txt'));
-
-    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'ingamemainmenu.res'));
-    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp1flyout.res'));
-    fs.copyFileSync(path.join(exportPath, '..', 'template', 'resource', 'ui', 'l4d360ui', 'setsurvivorp2flyout.res'), path.join(exportPath, 'resource', 'ui', 'l4d360ui', 'setsurvivorp2flyout.res'));
 };
 
 const main = (): void => {
